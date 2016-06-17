@@ -1,4 +1,4 @@
-# Filebeat
+# Dockerbeat
 
 A lightweight, open source shipper for docker daemon data. Dockerbeat polls
 the Docker Engine daemon, and sends cpu, network, memory, and host
