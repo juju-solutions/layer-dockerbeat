@@ -1,0 +1,19 @@
+name: dockerbeat
+summary: deploys the dockerbeat agent
+maintainer: Charles Butler <charles.butler@canonical.com>
+description: |
+  Dockerbeat is the Beat used for docker daemon monitoring.
+  It is a lightweight agent that periodically  reads docker
+  container statistics and indexes them in Elasticsearch.
+tags:
+  - metrics
+  - monitoring
+series:
+  - xenial
+  - trusty
+subordinate: true
+resources:
+  dockerbeat:
+    type: file
+    filename: dockerbeat
+    description: DockerBeat binary

@@ -1,0 +1,17 @@
+#!/usr/bin/python3
+
+import amulet
+import unittest
+
+
+class TestCharm(unittest.TestCase):
+    def setUp(self):
+        self.d = amulet.Deployment()
+
+        self.d.add('dockerbeat')
+        self.d.expose('dockerbeat')
+
+        self.d.setup(timeout=900)
+        self.d.sentry.wait()
+
+        self.unit = self.d.sentry['dockerbeat'][0]

@@ -1,0 +1,6 @@
+repo: http://github.com/juju-solutions/layer-dockerbeat
+includes:
+  - 'layer:beats-base'
+options:
+  basic:
+    use_venv: true

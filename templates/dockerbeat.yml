@@ -1,0 +1,41 @@
+# THIS FILE IS MANAGED BY JUJU
+# Do not edit by hand! Edits will not persist.
+dockerbeat:
+  # Defines how often a docker stat is sent to the output
+  period: {{ input_period }}
+  socket: {{ docker_socket }}
+
+  # If dockerbeat has to deal with a TLS-enabled docker daemon, you need to enable TLS and configure path for key and certificates.
+  tls:
+    enable: {{ enable_tls }}
+    ca_path: {{ docker_ca_path }}
+    cert_path: {{ docker_cert_path }}
+    key_path: {{ docker_key_path }}
+logging:
+  to_syslog: true
+output:
+{% if logstash %}
+  logstash:
+    hosts:
+      {% for host in logstash %}
+      - "{{ host }}"
+      {% endfor -%}
+    worker: 1
+    compression_level: 3
+    loadbalance: true
+{% endif %}
+{% if elasticsearch %}
+  elasticsearch:
+    hosts:
+      {% for host in elasticsearch -%}
+      - "{{ host }}"
+      {% endfor %}
+    worker: 1
+    max_retries: 3
+    bulk_max_size: 50
+    timeout: 30
+{% endif %}
+{% if principal_unit %}
+shipper:
+  name: {{ principal_unit }}
+{% endif %}

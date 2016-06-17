@@ -1,0 +1,23 @@
+options:
+  input_period:
+    type: int
+    default: 5
+    description: how often a docker stat is sent to the output
+  docker_socket:
+    type: string
+    default: unix:///var/run/docker.sock
+    description: Socket to connect to the docker engine
+  enable_tls:
+    type: boolean
+    default: False
+    description: Enable tls when communicating with docker
+  docker_ca_path:
+    type: string
+    default: /etc/docker/ca.pem
+    description: Path on disk to the CA certificate
+  docker_cert_path:
+    type: string
+    default: /etc/docker/cert.pem
+  docker_key_path:
+    type: string
+    default: /etc/docker/key.pem

@@ -1,0 +1,17 @@
+[Unit]
+Description=dockerbeat - docker container statistics
+Documentation=https://github.com/ingensi/dockerbeat
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+PermissionsStartOnly=true
+ExecStart=/usr/local/bin/dockerbeat -c /etc/dockerbeat/dockerbeat.yml
+Restart=on-abnormal
+#RestartSec=10s
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+Alias=dockerbeat.service
