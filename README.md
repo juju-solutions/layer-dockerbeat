@@ -79,6 +79,18 @@ To monitor additional hosts, simply relate the Dockerbeat subordinate
 
     juju add-relation dockerbeat:beats-host my-charm
 
+## DockerBeat Delivery
+
+This charm makes use of Resources. A juju 2.0 feature. When deploying this
+charm on a juju 2.0 enabled controller, the upstream ingensi dockerbeat
+binary will ship with the charm targeted at X86 hosts. If you are on another
+architecture you may need to compile, and `juju attach` a new binary for
+your arch.
+
+### 1.25 Compatibility
+Alternatively, on juju 1.25 hosts, this charm supports a configurable URL and
+SHA1 sum configuration option to attempt to fetch. Configured for a release
+from the ingensi github repository.
 
 ## Contact information
 
