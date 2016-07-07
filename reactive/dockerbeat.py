@@ -4,11 +4,13 @@ from charms.reactive import when_not
 from charms.reactive import set_state
 from charms.reactive import remove_state
 
+from charmhelpers.core.hookenv import config
 from charmhelpers.core.hookenv import resource_get
 from charmhelpers.core.hookenv import status_set
 from charmhelpers.core.host import lsb_release
 from charmhelpers.core.host import service_restart
 from charmhelpers.core.templating import render
+from charmhelpers.fetch.archiveurl import ArchiveUrlFetchHandler
 
 from elasticbeats import render_without_context
 from elasticbeats import push_beat_index
@@ -21,12 +23,19 @@ import os
 
 @when_not('dockerbeat.installed')
 def install_dockerbeat():
-    ''' Installs dockerbeat from resources. '''
-    bin_path = resource_get('dockerbeat')
+    ''' Installs dockerbeat from resources, with a fallback option
+    to try to fetch over the network, for 1.25.5 hosts'''
+
+    try:
+        bin_path = resource_get('dockerbeat')
+    except NotImplementedError:
+        # Attempt to fetch and install from configured uri with validation
+        bin_path = download_from_upstream()
+
     full_beat_path = '/usr/local/bin/dockerbeat'
 
     if not bin_path:
-        status_set('blocked', 'Please provide the dockerbeat binary')
+        status_set('blocked', 'Missing dockerbeat binary')
         return
 
     install(bin_path, full_beat_path)
@@ -41,6 +50,11 @@ def install_dockerbeat():
         render('systemd', '/etc/systemd/system/dockerbeat.service', {})
 
     set_state('dockerbeat.installed')
+
+
+@when_any('config.fallback_url.changed', 'config.fallback_sum.changed')
+def remove_ready_state():
+    remove_state('dockerbeat.installed')
 
 
 @when('beat.render')
@@ -67,6 +81,15 @@ def push_dockerbeat_index(elasticsearch):
         host_string = "{}:{}".format(host['host'], host['port'])
     push_beat_index(host_string, 'dockerbeat')
     set_state('dockerbeat.index.pushed')
+
+
+def download_from_upstream():
+    if not config('fallback_url') or not config('fallback_sum'):
+        status_set('blocked', 'Missing configuration: ')
+        return None
+    client = ArchiveUrlFetchHandler()
+    return client.download_and_validate(config('fallback_url'),
+                                        config('fallback_sum'))
 
 
 def install(src, tgt):

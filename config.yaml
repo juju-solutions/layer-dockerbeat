@@ -21,3 +21,11 @@ options:
   docker_key_path:
     type: string
     default: /etc/docker/key.pem
+  fallback_url:
+    type: string
+    default: https://github.com/Ingensi/dockerbeat/releases/download/v1.0.0-rc1/dockerbeat-1.0.0-rc1-x86_64
+    description: URL to download dockerbeat binary release
+  fallback_sum:
+    type: string
+    default: c68767814e7f3bf256da52b28281a44bf392fecd
+    description: SHA1 sum of fallback_url payload
