@@ -52,6 +52,11 @@ def install_dockerbeat():
     set_state('dockerbeat.installed')
 
 
+@when_any('config.fallback_url.changed', 'config.fallback_sum.changed')
+def remove_ready_state():
+    remove_state('dockerbeat.installed')
+
+
 @when('beat.render')
 @when_any('elasticsearch.available', 'logstash.available')
 def render_beat_template():
