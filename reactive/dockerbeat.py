@@ -26,19 +26,26 @@ def install_dockerbeat():
     ''' Installs dockerbeat from resources, with a fallback option
     to try to fetch over the network, for 1.25.5 hosts'''
 
+    bin_path = None
+    full_beat_path = '/usr/local/bin/dockerbeat'
+
     try:
         bin_path = resource_get('dockerbeat')
     except NotImplementedError:
         # Attempt to fetch and install from configured uri with validation
-        bin_path = download_from_upstream()
+        pass
 
-    full_beat_path = '/usr/local/bin/dockerbeat'
+    if not bin_path:
+        bin_path = download_from_upstream()
 
     if not bin_path:
         status_set('blocked', 'Missing dockerbeat binary')
         return
 
-    install(bin_path, full_beat_path)
+    install_status = install(bin_path, full_beat_path)
+    if not install_status:
+        status_set('blocked', "Installation of binary failed. Check logs.")
+        return
     os.chmod(full_beat_path, 0o755)
 
     codename = lsb_release()['DISTRIB_CODENAME']
@@ -85,7 +92,7 @@ def push_dockerbeat_index(elasticsearch):
 
 def download_from_upstream():
     if not config('fallback_url') or not config('fallback_sum'):
-        status_set('blocked', 'Missing configuration: ')
+        status_set('blocked', 'Missing fallback configuration')
         return None
     client = ArchiveUrlFetchHandler()
     return client.download_and_validate(config('fallback_url'),
