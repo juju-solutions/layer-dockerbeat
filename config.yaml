@@ -14,13 +14,16 @@ options:
   docker_ca_path:
     type: string
     default: /etc/docker/ca.pem
-    description: Path on disk to the CA certificate
+    description: Path on disk to the TLS certificate authority 
   docker_cert_path:
     type: string
     default: /etc/docker/cert.pem
+    description: Path on disk to the TLS certificate
+
   docker_key_path:
     type: string
     default: /etc/docker/key.pem
+    description: Path on disk to the TLS key
   fallback_url:
     type: string
     default: https://github.com/Ingensi/dockerbeat/releases/download/v1.0.0-rc1/dockerbeat-1.0.0-rc1-x86_64
